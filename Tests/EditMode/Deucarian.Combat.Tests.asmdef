@@ -1,0 +1,21 @@
+{
+  "name": "Deucarian.Combat.Tests",
+  "rootNamespace": "Deucarian.Combat.Tests",
+  "references": [
+    "Deucarian.Combat",
+    "Deucarian.GameplayFoundation"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

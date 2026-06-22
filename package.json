@@ -1,0 +1,21 @@
+{
+  "name": "com.deucarian.combat",
+  "version": "0.1.0",
+  "displayName": "Deucarian Combat",
+  "description": "Pure C# combat rules for health, shields, damage, mitigation, critical hits, statuses, targeting, snapshots, and deterministic results.",
+  "unity": "6000.3",
+  "author": {
+    "name": "Deucarian"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "com.deucarian.gameplay-foundation": "0.1.0"
+  },
+  "samples": [
+    {
+      "displayName": "Combat Sandbox",
+      "description": "Headless sample for damage, critical hits, mitigation, healing, statuses, and deterministic replay.",
+      "path": "Samples~/CombatSandbox"
+    }
+  ]
+}
