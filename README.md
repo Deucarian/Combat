@@ -1,8 +1,8 @@
 # Deucarian Combat
 
-`com.deucarian.combat` is a pure C# combat rules package for health, shields, damage packets, mitigation, critical hits, statuses, snapshots, and deterministic target selection.
+`com.deucarian.combat` is a pure C# combat rules package for health, shields, damage packets, mitigation, critical hits, statuses, snapshots, deterministic target selection, and public damage resolution.
 
-Combat resolves an already requested combat effect. It does not schedule attacks, move projectiles, discover targets, play VFX/audio, render UI, persist files, award progression, spawn encounters, place towers, or own a global service.
+Combat resolves an already requested combat effect through `CombatDamageResolver.Resolve`. It does not schedule attacks, move projectiles, discover targets, play VFX/audio, render UI, persist files, award progression, spawn encounters, place towers, or own a global service.
 
 Runtime dependency: `com.deucarian.gameplay-foundation`.
 

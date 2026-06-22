@@ -32,3 +32,23 @@ The suite includes a repeatable microbenchmark/allocation harness over health qu
 `C:/Repositories/Deucarian/Combat-TestProject/Logs/combat-microbenchmark-results.json`
 
 The Phase 1D requirement-to-test matrix is maintained in the Phase 1E preflight documentation so the accepted Combat package report remains concise.
+
+## Phase 1I Closeout Results
+
+- Import command: `Unity.exe -batchmode -quit -projectPath C:/Repositories/Deucarian/Combat-TestProject -logFile C:/Repositories/Deucarian/Combat-TestProject-phase1i-import.log`
+- Import result: return code `0`; no compiler errors found.
+- EditMode command: `Unity.exe -batchmode -projectPath C:/Repositories/Deucarian/Combat-TestProject -executeMethod BatchEditModeTestRunner.Run -batchTestResults C:/Repositories/Deucarian/Combat-TestProject-phase1i-edit-2.txt -logFile C:/Repositories/Deucarian/Combat-TestProject-phase1i-edit-2.log`
+- EditMode result: `result=Passed; passCount=17; failCount=0; skipCount=0; duration=0,379`
+- Repeat command: `Unity.exe -batchmode -projectPath C:/Repositories/Deucarian/Combat-TestProject -executeMethod BatchEditModeTestRunner.Run -batchTestResults C:/Repositories/Deucarian/Combat-TestProject-phase1i-edit-3.txt -logFile C:/Repositories/Deucarian/Combat-TestProject-phase1i-edit-3.log`
+- Repeat result: `result=Passed; passCount=17; failCount=0; skipCount=0; duration=0,322`
+
+Phase 1I added focused coverage for the public `CombatDamageResolver` facade, shield absorption, health damage, exact-zero death, overkill, invalid request atomicity, objective-style combatants, previous/current result values, and repeated deterministic results.
+
+Benchmark output after the repeat run:
+
+- `health-query`: `0.042 ms`, `0` bytes allocated.
+- `status-lookup`: `0.052 ms`, `0` bytes allocated.
+- `simple-damage-resolution`: `2.048 ms`, `0` bytes allocated.
+- `multi-component-damage-resolution`: `2.811 ms`, `0` bytes allocated.
+- `status-tick-no-change`: `0.090 ms`, `0` bytes allocated.
+- `target-selection-preallocated-buffer`: `0.368 ms`, `0` bytes allocated.

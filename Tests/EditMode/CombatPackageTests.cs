@@ -77,6 +77,65 @@ namespace Deucarian.Combat.Tests
         }
 
         [Test]
+        public void CombatDamageResolver_PublicFacade_ResolvesDamageAndKeepsFailureAtomic()
+        {
+            CombatCatalog catalog = Catalog();
+            HealthState normal = new HealthState(new CombatantId("combatant.normal"), 100, 100, 25, 25);
+            DamageResolutionResult first = CombatDamageResolver.Resolve(new DamageResolutionRequest(catalog, normal, null, Request(normal.Id, new[] { new DamageComponent(Physical, 40) })));
+
+            Assert.AreEqual(CombatStatus.Success, first.Status);
+            Assert.AreEqual(25, first.ShieldAbsorbed);
+            Assert.AreEqual(15, first.HealthDamage);
+            Assert.AreEqual(100, first.Previous.CurrentHealth);
+            Assert.AreEqual(85, first.Current.CurrentHealth);
+            Assert.AreEqual(0, first.Current.CurrentShield);
+
+            HealthState exactZero = new HealthState(new CombatantId("combatant.exact-zero"), 30, 30);
+            DamageResolutionResult kill = CombatDamageResolver.Resolve(catalog, exactZero, null, Request(exactZero.Id, new[] { new DamageComponent(Physical, 30) }));
+            Assert.AreEqual(LifeState.Dead, exactZero.LifeState);
+            Assert.AreEqual(30, kill.HealthDamage);
+            Assert.AreEqual(0, kill.Overkill);
+
+            HealthState overkill = new HealthState(new CombatantId("combatant.overkill"), 30, 30);
+            DamageResolutionResult over = CombatDamageResolver.Resolve(catalog, overkill, null, Request(overkill.Id, new[] { new DamageComponent(Physical, 45) }));
+            Assert.AreEqual(LifeState.Dead, overkill.LifeState);
+            Assert.AreEqual(30, over.HealthDamage);
+            Assert.AreEqual(15, over.Overkill);
+
+            HealthState invalid = new HealthState(new CombatantId("combatant.invalid-target"), 100, 100, 10, 10);
+            HealthSnapshot before = invalid.CreateSnapshot();
+            DamageResolutionResult rejected = CombatDamageResolver.Resolve(catalog, invalid, null, Request(new CombatantId("combatant.other"), new[] { new DamageComponent(Physical, 10) }));
+            Assert.AreEqual(CombatStatus.InvalidInput, rejected.Status);
+            Assert.AreEqual(before.CurrentHealth, invalid.CurrentHealth);
+            Assert.AreEqual(before.CurrentShield, invalid.CurrentShield);
+            Assert.AreEqual(before.LifeState, invalid.LifeState);
+
+            HealthState objective = new HealthState(new CombatantId("defense.objective/core"), 50, 50);
+            DamageResolutionResult objectiveHit = CombatDamageResolver.Resolve(catalog, objective, null, Request(objective.Id, new[] { new DamageComponent(Fire, 10) }, defense: new CombatDefenseSnapshot(resistances: new[] { new ResistanceEntry(Fire, 0.5) })));
+            Assert.AreEqual(5, objectiveHit.HealthDamage);
+            Assert.AreEqual(45, objective.CurrentHealth);
+        }
+
+        [Test]
+        public void CombatDamageResolver_RepeatedInputs_AreDeterministic()
+        {
+            CombatCatalog catalog = Catalog();
+            DamageRequest request = Request(new CombatantId("combatant.repeat"), new[] { new DamageComponent(Fire, 8), new DamageComponent(Physical, 4) }, new CombatSourceSnapshot(0.5, 2), new CombatDefenseSnapshot(armor: 1, resistances: new[] { new ResistanceEntry(Fire, 0.25) }));
+
+            DamageResolutionResult a = CombatDamageResolver.Resolve(catalog, new HealthState(request.TargetId, 100, 100, 5, 5), null, request, new DeterministicRandom(99));
+            DamageResolutionResult b = CombatDamageResolver.Resolve(catalog, new HealthState(request.TargetId, 100, 100, 5, 5), null, request, new DeterministicRandom(99));
+
+            Assert.AreEqual(a.Status, b.Status);
+            Assert.AreEqual(a.Critical.Roll, b.Critical.Roll);
+            Assert.AreEqual(a.FinalDamage, b.FinalDamage);
+            Assert.AreEqual(a.ShieldAbsorbed, b.ShieldAbsorbed);
+            Assert.AreEqual(a.HealthDamage, b.HealthDamage);
+            Assert.AreEqual(a.Current.CurrentHealth, b.Current.CurrentHealth);
+            Assert.AreEqual(a.Components[0].DamageTypeId, b.Components[0].DamageTypeId);
+            Assert.AreEqual(a.Components[1].DamageTypeId, b.Components[1].DamageTypeId);
+        }
+
+        [Test]
         public void DamagePackets_MitigateInCanonicalOrderAndRemainAtomicOnFailure()
         {
             CombatCatalog catalog = Catalog();

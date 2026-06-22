@@ -50,6 +50,58 @@ namespace Deucarian.Combat
         public IReadOnlyList<StatusApplicationResult> StatusResults { get; }
     }
 
+    public sealed class DamageResolutionRequest
+    {
+        public DamageResolutionRequest(CombatCatalog catalog, HealthState target, StatusState statuses, DamageRequest damage, IRandomSource random = null)
+        {
+            Catalog = catalog;
+            Target = target;
+            Statuses = statuses;
+            Damage = damage;
+            Random = random;
+        }
+        public CombatCatalog Catalog { get; }
+        public HealthState Target { get; }
+        public StatusState Statuses { get; }
+        public DamageRequest Damage { get; }
+        public IRandomSource Random { get; }
+    }
+
+    public sealed class DamageResolutionResult
+    {
+        public DamageResolutionResult(DamageResult damage)
+        {
+            Damage = damage ?? throw new ArgumentNullException(nameof(damage));
+        }
+        public DamageResult Damage { get; }
+        public CombatStatus Status => Damage.Status;
+        public bool Succeeded => Damage.Succeeded;
+        public CriticalHitResult Critical => Damage.Critical;
+        public IReadOnlyList<DamageComponentResult> Components => Damage.Components;
+        public double RequestedDamage => Damage.RequestedDamage;
+        public double FinalDamage => Damage.FinalDamage;
+        public double ShieldAbsorbed => Damage.ShieldAbsorbed;
+        public double HealthDamage => Damage.HealthDamage;
+        public double Overkill => Damage.Overkill;
+        public HealthSnapshot Previous => Damage.Previous;
+        public HealthSnapshot Current => Damage.Current;
+        public IReadOnlyList<StatusApplicationResult> StatusResults => Damage.StatusResults;
+    }
+
+    public static class CombatDamageResolver
+    {
+        public static DamageResolutionResult Resolve(DamageResolutionRequest request)
+        {
+            if (request == null) return new DamageResolutionResult(DamageResolver.Apply(null, null, null, null));
+            return Resolve(request.Catalog, request.Target, request.Statuses, request.Damage, request.Random);
+        }
+
+        public static DamageResolutionResult Resolve(CombatCatalog catalog, HealthState target, StatusState statuses, DamageRequest damage, IRandomSource random = null)
+        {
+            return new DamageResolutionResult(DamageResolver.Apply(catalog, target, statuses, damage, random));
+        }
+    }
+
     public static class DamageResolver
     {
         public static DamageResult Apply(CombatCatalog catalog, HealthState target, StatusState statuses, DamageRequest request, IRandomSource random = null)
