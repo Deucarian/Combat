@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 using Deucarian.GameplayFoundation;
 using NUnit.Framework;
 
@@ -288,6 +290,78 @@ namespace Deucarian.Combat.Tests
             Assert.GreaterOrEqual(allocated, 0);
         }
 
+        [Test]
+        public void DurableMicrobenchmark_WritesRequiredOperationMeasurements()
+        {
+            string logDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
+            Directory.CreateDirectory(logDirectory);
+            string path = Path.Combine(logDirectory, "combat-microbenchmark-results.json");
+            CombatCatalog catalog = Catalog();
+            HealthState simpleTarget = new HealthState(new CombatantId("combatant.bench-simple"), 1_000_000, 1_000_000, 1000, 1000);
+            HealthState multiTarget = new HealthState(new CombatantId("combatant.bench-multi"), 1_000_000, 1_000_000, 1000, 1000);
+            StatusState statuses = new StatusState();
+            DamageRequest simple = Request(simpleTarget.Id, new[] { new DamageComponent(Physical, 1) });
+            DamageRequest multi = Request(multiTarget.Id, new[] { new DamageComponent(Physical, 1), new DamageComponent(Fire, 1) }, defense: new CombatDefenseSnapshot(resistances: new[] { new ResistanceEntry(Fire, 0.1) }));
+            TargetCandidate[] candidates = { new TargetCandidate(new CombatantId("combatant.a")), new TargetCandidate(new CombatantId("combatant.b")) };
+            var scorer = new ConstantScorer();
+            int warmup = 100;
+            int operations = 1000;
+
+            for (int index = 0; index < warmup; index++)
+            {
+                _ = simpleTarget.CurrentHealth;
+                statuses.Contains(Burn);
+                DamageResolver.Apply(catalog, simpleTarget, statuses, simple);
+                DamageResolver.Apply(catalog, multiTarget, statuses, multi);
+                statuses.AdvanceTicks(0);
+                TargetSelector.Select(candidates, scorer);
+            }
+
+            Measurement[] measurements =
+            {
+                Measure("health-query", operations, () => { _ = simpleTarget.CurrentHealth; }),
+                Measure("status-lookup", operations, () => { statuses.Contains(Burn); }),
+                Measure("simple-damage-resolution", operations, () => { DamageResolver.Apply(catalog, simpleTarget, statuses, simple); }),
+                Measure("multi-component-damage-resolution", operations, () => { DamageResolver.Apply(catalog, multiTarget, statuses, multi); }),
+                Measure("status-tick-no-change", operations, () => { statuses.AdvanceTicks(0); }),
+                Measure("target-selection-preallocated-buffer", operations, () => { TargetSelector.Select(candidates, scorer); })
+            };
+
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("{");
+            builder.AppendLine("  \"unityVersion\": \"6000.3.5f1\",");
+            builder.AppendLine("  \"runtime\": \"Unity EditMode Mono\",");
+            builder.AppendLine("  \"configuration\": \"combat-phase-1d-required-operations\",");
+            builder.AppendLine("  \"warmupCount\": 100,");
+            builder.AppendLine("  \"measuredOperationCount\": 1000,");
+            builder.AppendLine("  \"operations\": [");
+            for (int index = 0; index < measurements.Length; index++)
+            {
+                Measurement m = measurements[index];
+                builder.Append("    { \"name\": \"").Append(m.Name).Append("\", \"elapsedMs\": ").Append(m.ElapsedMilliseconds.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture)).Append(", \"bytesAllocated\": ").Append(m.BytesAllocated).Append(", \"bytesPerOperation\": ").Append(m.BytesPerOperation.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture)).Append(" }");
+                builder.AppendLine(index == measurements.Length - 1 ? string.Empty : ",");
+            }
+
+            builder.AppendLine("  ]");
+            builder.AppendLine("}");
+            File.WriteAllText(path, builder.ToString());
+            Assert.IsTrue(File.Exists(path));
+        }
+
+        private static Measurement Measure(string name, int operations, Action operation)
+        {
+            long before = GC.GetAllocatedBytesForCurrentThread();
+            Stopwatch watch = Stopwatch.StartNew();
+            for (int index = 0; index < operations; index++)
+            {
+                operation();
+            }
+
+            watch.Stop();
+            long bytes = GC.GetAllocatedBytesForCurrentThread() - before;
+            return new Measurement(name, watch.Elapsed.TotalMilliseconds, bytes, bytes / (double)operations);
+        }
+
         private static CombatCatalog Catalog()
         {
             return new CombatCatalog(
@@ -311,6 +385,22 @@ namespace Deucarian.Combat.Tests
         private sealed class ConstantScorer : ITargetScorer
         {
             public bool TryScore(TargetCandidate candidate, out double score) { score = 1; return true; }
+        }
+
+        private readonly struct Measurement
+        {
+            public Measurement(string name, double elapsedMilliseconds, long bytesAllocated, double bytesPerOperation)
+            {
+                Name = name;
+                ElapsedMilliseconds = elapsedMilliseconds;
+                BytesAllocated = bytesAllocated;
+                BytesPerOperation = bytesPerOperation;
+            }
+
+            public string Name { get; }
+            public double ElapsedMilliseconds { get; }
+            public long BytesAllocated { get; }
+            public double BytesPerOperation { get; }
         }
     }
 }

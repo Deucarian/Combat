@@ -27,4 +27,8 @@ IL2CPP, Burst, mobile runtime, and Entities compatibility are unverified until s
 - Repeat command: `Unity.exe -batchmode -projectPath C:/Repositories/Deucarian/Combat-TestProject -executeMethod BatchEditModeTestRunner.Run -batchTestResults C:/Repositories/Deucarian/Combat-TestProject-batch-repeat.txt -logFile C:/Repositories/Deucarian/Combat-TestProject-batch-repeat.log`
 - Repeat result: `result=Passed; passCount=14; failCount=0; skipCount=0; duration=0,298`
 
-The suite includes a repeatable microbenchmark/allocation harness over health query, status lookup, simple damage resolution, zero-tick status advancement, and target selection. The current batch runner did not emit `TestContext.WriteLine` payloads into the compact result file, so exact allocation bytes are not claimed here.
+The suite includes a repeatable microbenchmark/allocation harness over health query, status lookup, simple damage resolution, multi-component damage resolution, zero-tick status advancement, and target selection. The durable output path is:
+
+`C:/Repositories/Deucarian/Combat-TestProject/Logs/combat-microbenchmark-results.json`
+
+The Phase 1D requirement-to-test matrix is maintained in the Phase 1E preflight documentation so the accepted Combat package report remains concise.
