@@ -1,0 +1,20 @@
+{
+  "packageId": "com.deucarian.combat",
+  "displayName": "Deucarian Combat",
+  "ownedCapabilities": [],
+  "runtimeAssemblies": [
+    "Deucarian.Combat"
+  ],
+  "editorAssemblies": [],
+  "sampleAssemblies": [],
+  "testAssemblies": [
+    "Deucarian.Combat.Tests"
+  ],
+  "requiredDependencies": [
+    "com.deucarian.gameplay-foundation"
+  ],
+  "optionalVersionDefinedDependencies": [],
+  "allowedDirectDebugCalls": [],
+  "allowedDirectUnityObjectLifetimeCalls": [],
+  "expectedSamplesRoot": "Samples~"
+}
