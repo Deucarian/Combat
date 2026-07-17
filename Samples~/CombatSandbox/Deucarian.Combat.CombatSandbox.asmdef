@@ -1,0 +1,17 @@
+{
+  "name": "Deucarian.Combat.CombatSandbox",
+  "rootNamespace": "Deucarian.Combat.Samples",
+  "references": [
+    "Deucarian.Combat",
+    "Deucarian.GameplayFoundation"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}
