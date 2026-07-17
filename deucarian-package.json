@@ -1,12 +1,15 @@
 {
   "packageId": "com.deucarian.combat",
   "displayName": "Deucarian Combat",
+  "samplePolicy": "compiled-example",
   "ownedCapabilities": [],
   "runtimeAssemblies": [
     "Deucarian.Combat"
   ],
   "editorAssemblies": [],
-  "sampleAssemblies": [],
+  "sampleAssemblies": [
+    "Deucarian.Combat.CombatSandbox"
+  ],
   "testAssemblies": [
     "Deucarian.Combat.Tests"
   ],
