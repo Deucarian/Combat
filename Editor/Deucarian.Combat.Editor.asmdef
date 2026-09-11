@@ -1,0 +1,20 @@
+{
+  "name": "Deucarian.Combat.Editor",
+  "rootNamespace": "Deucarian.Combat.Editor",
+  "references": [
+    "Deucarian.Combat",
+    "Deucarian.Editor",
+    "Deucarian.Combat.Unity"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
