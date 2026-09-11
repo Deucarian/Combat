@@ -13,6 +13,7 @@ namespace Deucarian.Combat
         public CombatScope(CombatCatalog catalog, IRandomSource random = null)
         { this.catalog = catalog ?? throw new ArgumentNullException(nameof(catalog)); this.random = random; }
         public bool IsDisposed { get; private set; }
+        public CombatCatalog Catalog { get { ThrowIfDisposed(); return catalog; } }
 
         public CombatantHandle Register(HealthState health, StatusState statuses, Func<CombatDefenseSnapshot> captureDefense = null)
         {

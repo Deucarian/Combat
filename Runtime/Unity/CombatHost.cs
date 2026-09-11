@@ -5,10 +5,12 @@ using UnityEngine;
 namespace Deucarian.Combat.Unity
 {
     /// <summary>Simple scene entry point into one combat scope. State and resolution remain in the pure core.</summary>
-    [DisallowMultipleComponent]
+    [DefaultExecutionOrder(-1000), DisallowMultipleComponent]
     public sealed class CombatHost : MonoBehaviour, IDiagnosticProvider
     {
         private CombatScope scope;
+        [SerializeField] private bool initializeFromDefinitions;
+        [SerializeField] private CombatDefinitionCatalog definitions;
         private bool ownsScope;
         private bool destroyed;
         public void Configure(CombatScope value, bool takeOwnership = false)
@@ -24,10 +26,14 @@ namespace Deucarian.Combat.Unity
         public DamageResult ApplyDamage(CombatantHandle target, DamageTypeKey damageType, double amount) =>
             Scope.ApplyDamage(target, damageType, amount);
         public StatusApplicationResult ApplyStatus(CombatantHandle target, StatusEffectKey status) => Scope.ApplyStatus(target, status);
-        private CombatScope Scope => scope ?? throw new InvalidOperationException("CombatHost '" + name + "' is not configured. Supply a CombatScope with this world's CombatCatalog during startup.");
+        public CombatScope Scope => scope ?? throw new InvalidOperationException("CombatHost '" + name + "' is not configured. Supply a CombatScope with this world's CombatCatalog during startup.");
         private void OnDestroy() { diagnosticRegistration?.Dispose(); diagnosticRegistration = null;  destroyed = true; if (ownsScope) scope?.Dispose(); scope = null; }
         private DiagnosticProviderRegistration diagnosticRegistration;
-        private void Awake() => diagnosticRegistration = DiagnosticProviderRegistry.Register(this);
+        private void Awake()
+        {
+            diagnosticRegistration = DiagnosticProviderRegistry.Register(this);
+            if (initializeFromDefinitions && scope == null) Configure((definitions != null ? definitions : CombatDefinitionCatalog.LoadProject()).CreateScope(), true);
+        }
         string IDiagnosticProvider.ProviderId => "combat.host." + GetInstanceID();
         string IDiagnosticProvider.DisplayName => "CombatHost";
         void IDiagnosticProvider.Collect(DiagnosticReportBuilder builder)
