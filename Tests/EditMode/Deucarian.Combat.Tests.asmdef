@@ -3,7 +3,9 @@
   "rootNamespace": "Deucarian.Combat.Tests",
   "references": [
     "Deucarian.Combat",
-    "Deucarian.GameplayFoundation"
+    "Deucarian.GameplayFoundation",
+    "Deucarian.Combat.Unity",
+    "Deucarian.Diagnostics"
   ],
   "includePlatforms": [
     "Editor"
@@ -20,5 +22,5 @@
   "optionalUnityReferences": [
     "TestAssemblies"
   ],
-  "noEngineReferences": true
+  "noEngineReferences": false
 }

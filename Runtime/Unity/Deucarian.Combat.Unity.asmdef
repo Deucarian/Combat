@@ -1,0 +1,17 @@
+{
+  "name": "Deucarian.Combat.Unity",
+  "rootNamespace": "Deucarian.Combat.Unity",
+  "references": [
+    "Deucarian.Combat",
+    "Deucarian.Diagnostics"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

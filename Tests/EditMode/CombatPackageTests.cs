@@ -18,6 +18,25 @@ namespace Deucarian.Combat.Tests
         private static readonly ImmunityTag Control = new ImmunityTag("control");
 
         [Test]
+        public void ScopeUsesOriginalHealthAndRejectsForeignAndReleasedTargets()
+        {
+            var health = new HealthState(new CombatantId("scope.target"), 100, 100);
+            using (var scope = new CombatScope(Catalog()))
+            using (var other = new CombatScope(Catalog()))
+            {
+                var target = scope.Register(health, new StatusState());
+                var key = new ScopeDamageKey();
+                Assert.That(scope.ApplyDamage(target, key, 10).Status, Is.EqualTo(CombatStatus.Success));
+                Assert.That(health.CurrentHealth, Is.EqualTo(90));
+                Assert.That(other.ApplyDamage(target, key, 10).Status, Is.EqualTo(CombatStatus.InvalidInput));
+                target.Dispose();
+                Assert.That(scope.ApplyDamage(target, key, 10).Status, Is.EqualTo(CombatStatus.InvalidInput));
+                Assert.That(health.CurrentHealth, Is.EqualTo(90));
+            }
+        }
+        private sealed class ScopeDamageKey : IDamageTypeKey { public string Id => Physical.Value; }
+
+        [Test]
         public void IdentifiersAndCatalogs_ValidateAndOrderDeterministically()
         {
             Assert.AreEqual("combatant.enemy-1", new CombatantId("combatant.enemy-1").Value);

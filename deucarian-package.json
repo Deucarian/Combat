@@ -4,17 +4,23 @@
   "samplePolicy": "compiled-example",
   "ownedCapabilities": [],
   "runtimeAssemblies": [
-    "Deucarian.Combat"
+    "Deucarian.Combat",
+    "Deucarian.Combat.Unity"
   ],
-  "editorAssemblies": [],
+  "editorAssemblies": [
+    "Deucarian.Combat.Editor"
+  ],
   "sampleAssemblies": [
     "Deucarian.Combat.CombatSandbox"
   ],
   "testAssemblies": [
-    "Deucarian.Combat.Tests"
+    "Deucarian.Combat.Tests",
+    "Deucarian.Combat.Tests.PlayMode"
   ],
   "requiredDependencies": [
-    "com.deucarian.gameplay-foundation"
+    "com.deucarian.editor",
+    "com.deucarian.gameplay-foundation",
+    "com.deucarian.diagnostics"
   ],
   "optionalVersionDefinedDependencies": [],
   "allowedDirectDebugCalls": [],
