@@ -2,6 +2,7 @@
   "name": "Deucarian.Combat.Unity",
   "rootNamespace": "Deucarian.Combat.Unity",
   "references": [
+    "Deucarian.GameplayFoundation",
     "Deucarian.Combat",
     "Deucarian.Diagnostics"
   ],

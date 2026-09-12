@@ -11,15 +11,17 @@
     "Deucarian.Combat.Editor"
   ],
   "sampleAssemblies": [
-    "Deucarian.Combat.CombatSandbox"
+    "Deucarian.Combat.CombatSandbox",
+    "Deucarian.Combat.Unity.Samples.DefinitionWorkflow",
+    "Deucarian.Samples.Combat.DefinitionDeclarations"
   ],
   "testAssemblies": [
     "Deucarian.Combat.Tests",
     "Deucarian.Combat.Tests.PlayMode"
   ],
   "requiredDependencies": [
-    "com.deucarian.editor",
     "com.deucarian.gameplay-foundation",
+    "com.deucarian.editor",
     "com.deucarian.diagnostics"
   ],
   "optionalVersionDefinedDependencies": [],
