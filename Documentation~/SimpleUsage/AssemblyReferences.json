@@ -1,0 +1,17 @@
+{
+  "name": "Deucarian.Combat.Samples.SimpleUsage",
+  "rootNamespace": "Deucarian.Combat.Samples.SimpleUsage",
+  "references": [
+    "Deucarian.Combat",
+    "Deucarian.Combat.Unity"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

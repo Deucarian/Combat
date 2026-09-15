@@ -1,0 +1,7 @@
+{
+  "name": "Deucarian.Combat.Unity.Samples.DefinitionWorkflow",
+  "references": [
+    "Deucarian.Combat",
+    "Deucarian.Combat.Unity"
+  ]
+}
